@@ -364,7 +364,7 @@ vACS_Module.onBreach = function(Player, Mode, BreachPlace, Pos, Norm, Hit, code)
 	end
 end
 
-vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settings, code)
+vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settings, TotalDistTraveled, code)
     check_unique(Player, code)
 	vACS_Server.Events.Hit:FireAllClients(Player, Position, HitPart, Normal, Material, Settings)
 	
@@ -416,7 +416,7 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 	end
 end
 
-vACS_Module.onLauncherHit = function(Player, Position, HitPart, Normal, code)
+vACS_Module.onLauncherHit = function(Player, Position, HitPart, Normal, Material, code)
     check_unique(Player, code)
 	vACS_Server.Events.LauncherHit:FireAllClients(Player, Position, HitPart, Normal)
 end
@@ -436,7 +436,7 @@ vACS_Module.onServerBullet = function(Player, BulletCF, Tracer, Force, BSpeed, D
 	vACS_Server.Events.ServerBullet:FireAllClients(Player, BulletCF, Tracer, Force, BSpeed, Direction, TracerColor,Ray_Ignore,BulletFlare,BulletFlareColor)
 end
 
-vACS_Module.onEquipar = function(Player, Arma, code)
+vACS_Module.onEquipar = function(Player, Arma, Settings, code)
     check_unique(Player, code)
 	local Torso = Player.Character:FindFirstChild('Torso')
 	local Head = Player.Character:FindFirstChild('Head')
@@ -576,8 +576,7 @@ vACS_Module.Holster = function(Player,Arma, code)
 	end
 end
 
-vACS_Module.HeadRot = function(Player, Rotacao, Offset, Equipado, code)
-    check_unique(Player, code)
+vACS_Module.HeadRot = function(Player, Rotacao, Offset, Equipado)
 	vACS_Server.Events.HeadRot:FireAllClients(Player, Rotacao, Offset, Equipado)
 end
 
@@ -587,7 +586,6 @@ vACS_Module.Atirar = function(Player,FireRate,Anims,Arma, code)
 end
 
 vACS_Module.onStance = function(Player,stance,Settings,Anims)
-    check_unique(Player, code)
 	if Player.Character.Humanoid.Health > 0 and Player.Character.AnimBase:FindFirstChild("RAW") ~= nil and Player.Character.AnimBase:FindFirstChild("LAW") ~= nil then
 
 		local Right_Weld = Player.Character.AnimBase:WaitForChild("RAW")
@@ -687,8 +685,7 @@ vACS_Module.Render = function(Player,Status,Vitima, code)
 	end
 end
 
-vACS_Module.onDrag = function(player, code)
-    check_unique(Player, code)
+vACS_Module.onDrag = function(player)
 	local Human = player.Character.Humanoid
 	local enabled = Human.Parent.Saude.Variaveis.Doer
 	local MLs = Human.Parent.Saude.Variaveis.MLs
