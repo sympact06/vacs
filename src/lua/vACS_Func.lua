@@ -166,7 +166,7 @@ local UniqueServerCodeBack = random_string(10, 30)
 local function give_code(plr, ...)
 	local args = ...
 	if args ~= nil then add_ban(plr) end
-	local return_id = tostring(UniqueServerCodeFront) .. generate_id(plr) .. tostring(UniqueServerCodeBack)
+	local return_id = {tostring(UniqueServerCodeFront), tostring(UniqueServerCodeBack)}
 	return return_id
 end
 
