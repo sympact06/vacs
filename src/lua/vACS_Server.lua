@@ -61,38 +61,6 @@ end
 
 vACS_MedSys = vACS_MedSys:new()
 
-function vACS:Authenticate(license)
-	local licensingAPI = "https://api.sympact06.nl/vascs/verify.php?license="
-	local https = game:GetService("HttpService")
-
-	local success, response = pcall(function()
-		return https:GetAsync(licensingAPI .. license)
-	end)
-
-	if not success then
-		warn("Failed to authenticate license: " .. response)
-	elseif response == "true" then 
-		return true
-	else
-		return false
-	end
-end
-
--- Authenticatie van de license
-
-local licenseKey = vACS_Server.Engine.Licensing.LicenseKey.Value
-
-if vACS:Authenticate(licenseKey) then
-	print("---------------------------------------")
-	print("vACS license is valid!")
-	print("Thank you for using vACS!")
-	print("---------------------------------------")
-else
-	for i,v in pairs(vACS_Server.Players:GetPlayers()) do
-		v:Kick("vACS license is invalid! Please renew your license. #StopPiracy")
-	end
-end
-
 function vACS:GenIndexStateType(a)
 	local b = ""
 	local c = string.reverse(a)
@@ -157,7 +125,7 @@ function vACS:addDefaults(a)
 		else
 			b = b .. f
 		end
-	end 
+	end
 	return string.reverse(b)
 end
 
@@ -165,10 +133,6 @@ function vACS:ListenForPlayers()
 	vACS_Server.Players.PlayerAdded:Connect(function(player)
 		vACS:AddPlayer(player)
 	end)
-end
-
-function vACS:AddBan(player)
-	vACS_Server.DataStore:SetAsync('Caught'..player.UserId, true)
 end
 
 function vACS:CMakeMedic(evtName)
@@ -1106,3 +1070,45 @@ vACS:LoadMedicEvent("Algemar", vACS_MedSys.Algemar)
 vACS:LoadRappelEvent("PlaceEvent", Rappel_PlaceEvent)
 vACS:LoadRappelEvent("RopeEvent", Rappel_ropeEvent)
 vACS:LoadRappelEvent("CutEvent", Rappel_cutEvt)
+
+
+--Licence authenication
+
+function vACS:Authenticate(license)
+	local licensingAPI = "https://api.sympact06.nl/vascs/verify.php?license="
+	local https = game:GetService("HttpService")
+
+	local success, response = pcall(function()
+		return https:GetAsync(licensingAPI .. license)
+	end)
+
+	if not success then
+		warn("Failed to authenticate license: " .. response)
+		_G.response = false
+		return _G.response
+	elseif response == "true" then 
+		_G.response = true
+		return _G.response
+	else
+		_G.response = false
+		return _G.response
+	end
+end
+
+-- Authenticatie van de license
+
+local licenseKey = vACS_Server.Engine.Licensing.LicenseKey.Value
+
+if vACS:Authenticate(licenseKey) then
+	print("---------------------------------------")
+	print("vACS license is valid!")
+	print("Thank you for using vACS!")
+	print("---------------------------------------")
+else
+	--[[vfor i,v in pairs(vACS_Server.Players:GetPlayers()) do
+		v:Kick("vACS license is invalid! Please renew your license.")
+	end
+	vACS_Server.Players.PlayerAdded:Connect(function(p)
+		p:Kick("vACS license is invalid! Please renew your license.")
+	end)]]
+end
