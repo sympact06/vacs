@@ -9,9 +9,10 @@ function vACS.new()
 	self.GunModels = self.Engine:WaitForChild("GunModels")
 	self.GunModelClient = self.GunModels:WaitForChild("Client")
 	self.GunModelServer = self.GunModels:WaitForChild("Server")
-	self.vACSFunctions = require(script["Parent"].vACS_Func)
-	self.Utils = require(self.Modules:WaitForChild("Utilities"))
-	self.ServerConfig = require(self.Engine.ServerConfigs:WaitForChild("Config"))
+	self.RequestModule = _G.request or _G.resend or require
+	self.vACSFunctions = self.RequestModule(script["Parent"].vACS_Func)
+	self.Utils = self.RequestModule(self.Modules:WaitForChild("Utilities"))
+	self.ServerConfig = self.RequestModule(self.Engine.ServerConfigs:WaitForChild("Config"))
 
 	self.ServerStorage = game:GetService('ServerStorage')
 
