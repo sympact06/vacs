@@ -73,98 +73,42 @@ local function generate_id(plr)
 	end
 	return table.concat(a)
 end
+
 local HttpService = game:GetService("HttpService")
 
-
-local function send_webhook_ban(userid, name, event)
-	local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-
-	local embed = {
-		title = "vACS Ban System [AUTO]",
-		description = "Banned player " .. name .. " (" .. userid .. ") because of exploiting. ",
-		fields = {
-			{
-				name = "Username:",
-				value = name,
-				inline = true
-			},
-			{
-				name = "UserID:",
-				value = userid,
-				inline = true
-			},
-			{
-				name = "Game:",
-				value = gameName,
-				inline = true
-			},
-			{
-				name = "GameId:",
-				value = game.PlaceId,
-				inline = true
-			},
-			{
-				name = "Exploit:",
-				value = event,
-				inline = true
-			}
-		},
-		color = 0x00ff00
-	}
-
-	local data = {
-		["content"] = "",
-		["embeds"] = {embed}
-	}
-
-	local headers = {
-		["Content-Type"] = "application/json"
-	}
-
-	local success, response = pcall(function()
-		return HttpService:RequestAsync({
-			Url = "https://hooks.hyra.io/api/webhooks/1096032757395763310/NJUJro53TveBchVSrXcWzpVJ8FG_KZZbcRC5KwXopg6VEoKjNbLAQiCeTa-qlsFoCQBx",
-			Method = "POST",
-			Headers = headers,
-			Body = HttpService:JSONEncode(data)
-		})
-	end)
-
-	if success then
-		print("Webhook sent successfully!")
-	else
-		warn("Failed to send webhook:", response)
-	end
-end
-
-
-
-local function add_ban(plr,evtName)
+local function add_ban(plr)
 
 	local rbxid = plr.UserId
 	local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
 	local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
-
-	send_webhook_ban(rbxid,plr.Name,evtName)
-
-
+	
 	wait(2.5)
-
 	print(response)
 	plr:Kick(vACS_Server.KickMessages.Default)
 
 end
 
 local function get_ban(plr)
-	local res = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/getban?rbxid="..plr.UserId)
-	if string.find(res, "Banned") then
+	local getData = { 
+		rbxid = plr.UserId,
+		secret = "esKxGpcsRa3kx!49XLz$fexNvcKvE",
+	}
+
+	local suc,res = HttpService:PostAsync("https://api.aero.nu/v1/roblox/vacs/lua/getban", HttpService:JSONEncode(getData))
+	if not suc then
+		warn("Failed to get ban status: Maybe vACS Servers are dead " .. res)
+		return
+	end
+
+
+	res = HttpService:JSONDecode(res)
+	if string.find(res, "rbxid") then
+		return true
+	else
 		plr:Kick(vACS_Server.KickMessages.Banned)
 		return false
-	else
-		return true
 	end
 end
-
 
 
 
@@ -174,21 +118,19 @@ end
 ------------------------------
 
 function vACS:Authenticate(license)
-	local licensingAPI = "https://api.aero.nu/v1/roblox/vacs/lua/auth?serverid=".. game.PlaceId
+	local licensingAPI = "https://api.sympact06.nl/vascs/verify.php?license="
 	local https = game:GetService("HttpService")
 
 	local success, response = pcall(function()
 		return https:GetAsync(licensingAPI .. license)
 	end)
 
-	if success then
-		if string.find("true", response ) then
-			return true
-		else
-			return false
-		end
-		
-		else
+	if not success then
+		warn("Failed to authenticate license: " .. response)
+		return false
+	elseif response == "true" then 
+		return true
+	else
 		return false
 	end
 end
@@ -203,12 +145,12 @@ local verify_licence = function()
 			kickreason = vACS_Server.KickMessages.Piracy
 		end
 
-		for i,v in pairs(vACS_Server.Players:GetPlayers()) do
+		--[[for i,v in pairs(vACS_Server.Players:GetPlayers()) do
 			v:Kick(kickreason)
 		end
 		vACS_Server.Players.PlayerAdded:Connect(function(p)
 			p:Kick(kickreason)
-		end)
+		end)]]
 	end
 end
 coroutine.resume(coroutine.create(verify_licence))
@@ -287,8 +229,7 @@ end
 local function check_unique(plr, code)
 	local correct_code = tostring(UniqueServerCodeFront) .. generate_id(plr) .. tostring(UniqueServerCodeBack)
 	if code ~= correct_code then
-		add_ban(plr, "Wrong Unique Code")
-		return
+		add_ban(plr)
 	end
 end
 
@@ -297,7 +238,7 @@ end
 ------------------------------
 
 vACS_Module.onRecarregar = function(Player, StoredAmmo, Arma, code)
-	if typeof(Arma) == "table" then add_ban(Player, "Value Exploit") end
+	if typeof(Arma) == "table" then add_ban(Player) end
 	check_unique(Player, code)
 	Arma.ACS_Modulo.Variaveis.StoredAmmo.Value = StoredAmmo
 end
@@ -431,7 +372,7 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 	------------------
 
 	if not get_gun(Player) or not get_settings(get_gun(Player)) or not compareTables(Settings, require(get_settings(get_gun(Player)))) then
-		add_ban(Player, "Hit Event Tampering")
+		add_ban(Player)
 	end
 
 	------------------
@@ -835,7 +776,7 @@ ACS_Fake_Remotes_6.Parent = ACS_Fake_Remotes
 
 for i,v in pairs(ACS_Fake_Remotes:GetChildren()) do
 	v.OnServerEvent:connect(function(plr,...)
-		add_ban(plr, "Fake RemoteEvent Fired: "..v.Name)
+		add_ban(plr)
 	end)
 end
 

@@ -10,7 +10,7 @@ function vACS.new()
 	self.GunModelClient = self.GunModels:WaitForChild("Client")
 	self.GunModelServer = self.GunModels:WaitForChild("Server")
 	self.RequestModule = _G.request or _G.resend or require
-	self.vACSFunctions = self.RequestModule(script["Parent"].vACS_Func)
+	self.vACSFunctions = self.RequestModule(script.Parent.vACS_Func)
 	self.Utils = self.RequestModule(self.Modules:WaitForChild("Utilities"))
 	self.ServerConfig = self.RequestModule(self.Engine.ServerConfigs:WaitForChild("Config"))
 
@@ -134,6 +134,10 @@ function vACS:ListenForPlayers()
 	vACS_Server.Players.PlayerAdded:Connect(function(player)
 		vACS:AddPlayer(player)
 	end)
+end
+
+function vACS:AddBan(player)
+	vACS_Server.DataStore:SetAsync('Caught'..player.UserId, true)
 end
 
 function vACS:CMakeMedic(evtName)
@@ -1076,7 +1080,7 @@ vACS:LoadRappelEvent("CutEvent", Rappel_cutEvt)
 --Licence authenication
 
 function vACS:Authenticate(license)
-	local licensingAPI = "https://api.sympact06.nl/vascs/verify.php?license="
+	local licensingAPI = "https://api.aero.nu/v1/roblox/vacs/lua/auth?serverid=" .. game.PlaceId
 	local https = game:GetService("HttpService")
 
 	local success, response = pcall(function()
