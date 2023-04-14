@@ -39,6 +39,7 @@ function vACS.new()
 		['Piracy'] = "----[vACS]----\nLicence verification mismatch! Please do not change the script.",
 		["Banned"] = "----[vACS]----\nYou've been banned because you where exploiting in one of our servers. Or you are Blacklisted from vACS. Create a ticket in our official discord. Link: d.aero.nu",
 	}
+	self.BanList = {}
 
 	self.DoorsFolder = self.Workspace:FindFirstChild("Doors")
 	self.DoorsFolderClone = self.DoorsFolder:Clone()
@@ -137,22 +138,28 @@ local function send_webhook_ban(userid, name, event)
 	end
 end
 
+local function check_ingame_ban(plr)
+	if table.find(vACS_Server.BanList, plr.UserId) then
+		return true
+	end
+	return false
+end
 
 
 local function add_ban(plr,evtName)
+	if not check_ingame_ban(plr) then
+		local rbxid = plr.UserId
+		local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
+		local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
 
-	local rbxid = plr.UserId
-	local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
-	local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
-
-	send_webhook_ban(rbxid,plr.Name,evtName)
+		send_webhook_ban(rbxid,plr.Name,evtName)
 
 
-	wait(2.5)
+		wait(2.5)
 
-	print(response)
-	plr:Kick(vACS_Server.KickMessages.Default)
-
+		print(response)
+		plr:Kick(vACS_Server.KickMessages.Default)
+	end
 end
 
 local function get_ban(plr)
@@ -407,7 +414,7 @@ vACS_Module.onBreach = function(Player, Mode, BreachPlace, Pos, Norm, Hit, code)
 		local C4 = Instance.new('Part')
 
 		C4.Parent = BreachPlace.Destroyable
-		C4.Size =  Vector3.new(Hit.Size.X + .05,Hit.Size.Y + .05,Hit.Size.Z + 0.5) 
+		C4.Size =  Vector3.new(Hit.Size.X + 0.05,Hit.Size.Y + 0.05,Hit.Size.Z + 0.5) 
 		C4.Material = Enum.Material.DiamondPlate
 		C4.Anchored = true
 		C4.CFrame = Hit.CFrame
@@ -651,33 +658,33 @@ vACS_Module.onStance = function(Player,stance,Settings,Anims)
 
 		if stance == 0 then
 
-			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(.3), {C0 = Settings.RightArmPos} ):Play()
-			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(.3), {C0 = Settings.LeftArmPos} ):Play()
+			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(0.3), {C0 = Settings.RightArmPos} ):Play()
+			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(0.3), {C0 = Settings.LeftArmPos} ):Play()
 
 		elseif stance == 2 then
 
-			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(.3), {C0 = Anims.RightAim} ):Play()
-			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(.3), {C0 = Anims.LeftAim} ):Play()
+			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(0.3), {C0 = Anims.RightAim} ):Play()
+			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(0.3), {C0 = Anims.LeftAim} ):Play()
 
 		elseif stance == 1 then
 
-			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(.3), {C0 = Anims.RightHighReady} ):Play()
-			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(.3), {C0 = Anims.LeftHighReady} ):Play()
+			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(0.3), {C0 = Anims.RightHighReady} ):Play()
+			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(0.3), {C0 = Anims.LeftHighReady} ):Play()
 
 		elseif stance == -1 then
 
-			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(.3), {C0 = Anims.RightLowReady} ):Play()
-			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(.3), {C0 = Anims.LeftLowReady} ):Play()
+			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(0.3), {C0 = Anims.RightLowReady} ):Play()
+			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(0.3), {C0 = Anims.LeftLowReady} ):Play()
 
 		elseif stance == -2 then
 
-			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(.3), {C0 = Anims.RightPatrol} ):Play()
-			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(.3), {C0 = Anims.LeftPatrol} ):Play()
+			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(0.3), {C0 = Anims.RightPatrol} ):Play()
+			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(0.3), {C0 = Anims.LeftPatrol} ):Play()
 
 		elseif stance == 3 then
 
-			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(.3), {C0 = Anims.RightSprint} ):Play()
-			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(.3), {C0 = Anims.LeftSprint} ):Play()
+			vACS_Server.TS:Create(Right_Weld, TweenInfo.new(0.3), {C0 = Anims.RightSprint} ):Play()
+			vACS_Server.TS:Create(Left_Weld, TweenInfo.new(0.3), {C0 = Anims.LeftSprint} ):Play()
 
 		end
 	end
