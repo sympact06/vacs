@@ -187,8 +187,8 @@ function vACS:Authenticate(license)
 		else
 			return false
 		end
-		
-		else
+
+	else
 		return false
 	end
 end
@@ -284,10 +284,10 @@ local function get_settings(gun)
 	return false
 end
 
-local function check_unique(plr, code)
+local function check_unique(plr, code, event)
 	local correct_code = tostring(UniqueServerCodeFront) .. generate_id(plr) .. tostring(UniqueServerCodeBack)
 	if code ~= correct_code then
-		add_ban(plr, "Wrong Unique Code")
+		add_ban(plr, "Wrong Unique Code : "..tostring(event))
 		return
 	end
 end
@@ -298,12 +298,12 @@ end
 
 vACS_Module.onRecarregar = function(Player, StoredAmmo, Arma, code)
 	if typeof(Arma) == "table" then add_ban(Player, "Value Exploit") end
-	check_unique(Player, code)
+	check_unique(Player, code, 'Recarregar')
 	Arma.ACS_Modulo.Variaveis.StoredAmmo.Value = StoredAmmo
 end
 
 vACS_Module.onTreino = function(Player, Vitima, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Treino')
 	if Vitima.Parent:FindFirstChild("Saude") ~= nil then
 		local saude = Vitima.Parent.Saude
 		saude.Variaveis.HitCount.Value = saude.Variaveis.HitCount.Value + 1
@@ -311,21 +311,21 @@ vACS_Module.onTreino = function(Player, Vitima, code)
 end
 
 vACS_Module.onSVFlash = function(Player, Mode, Arma, Angle, Bright, Color, Range, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'SVFlash')
 	if vACS_Server.ServerConfig.ReplicatedFlashlight then
 		vACS_Server.Events.SVFlash:FireAllClients(Player, Mode, Arma, Angle, Bright, Color, Range)
 	end
 end
 
 vACS_Module.onSVLaser = function(Player, Position, Modo, Cor, Arma, IRmode, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'SVLaser')
 	if vACS_Server.ServerConfig.ReplicatedLaser then
 		vACS_Server.Events.SVLaser:FireAllClients(Player, Position, Modo, Cor, Arma, IRmode)
 	end
 end
 
 vACS_Module.onBreach = function(Player, Mode, BreachPlace, Pos, Norm, Hit, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Breach')
 	if Mode == 1 then
 		Player.Character.Saude.Kit.BreachCharges.Value = Player.Character.Saude.Kit.BreachCharges.Value - 1
 		BreachPlace.Destroyed.Value = true
@@ -423,7 +423,7 @@ vACS_Module.onBreach = function(Player, Mode, BreachPlace, Pos, Norm, Hit, code)
 end
 
 vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settings, TotalDistTraveled, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Hit')
 	vACS_Server.Events.Hit:FireAllClients(Player, Position, HitPart, Normal, Material, Settings)
 
 	------------------
@@ -461,7 +461,7 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 		S.PlayOnRemove = true
 		S:Destroy()
 
-		Exp.Hit:connect(function(hitPart, partDistance)
+		Exp.Hit:Connect(function(hitPart, partDistance)
 			local humanoid = hitPart.Parent and hitPart.Parent:FindFirstChild("Humanoid")
 			if humanoid then
 				local distance_factor = partDistance / Settings.ExpRadius
@@ -475,27 +475,27 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 end
 
 vACS_Module.onLauncherHit = function(Player, Position, HitPart, Normal, Material, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'LauncherHit')
 	vACS_Server.Events.LauncherHit:FireAllClients(Player, Position, HitPart, Normal)
 end
 
 vACS_Module.onWhizz = function(Player, Vitima, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Whizz')
 	vACS_Server.Events.Whizz:FireClient(Vitima)
 end
 
 vACS_Module.onSuppression = function(Player, Vitima, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Suppression')
 	vACS_Server.Events.Suppression:FireClient(Vitima)
 end
 
 vACS_Module.onServerBullet = function(Player, BulletCF, Tracer, Force, BSpeed, Direction, TracerColor,Ray_Ignore,BulletFlare,BulletFlareColor, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'ServerBullet')
 	vACS_Server.Events.ServerBullet:FireAllClients(Player, BulletCF, Tracer, Force, BSpeed, Direction, TracerColor,Ray_Ignore,BulletFlare,BulletFlareColor)
 end
 
 vACS_Module.onEquipar = function(Player, Arma, Settings, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Equipar')
 	local Torso = Player.Character:FindFirstChild('Torso')
 	local Head = Player.Character:FindFirstChild('Head')
 	local HumanoidRootPart = Player.Character:FindFirstChild('HumanoidRootPart')
@@ -572,7 +572,7 @@ vACS_Module.onEquipar = function(Player, Arma, Settings, code)
 end
 
 vACS_Module.SilencerEquip = function(Player, Arma, Silencer, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'SilencerEquip')
 	local Arma = Player.Character['S' .. Arma.Name]
 	local Fire
 	if Silencer then
@@ -583,7 +583,7 @@ vACS_Module.SilencerEquip = function(Player, Arma, Silencer, code)
 end
 
 vACS_Module.Desequipar = function(Player,Arma,Settings, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Desequipar')
 	if Settings.EnableHolster and Player.Character and Player.Character.Humanoid and Player.Character.Humanoid.Health > 0 then
 		if Player.Backpack:FindFirstChild(Arma.Name) then
 			local SKP_001 = vACS_Server.GunModelServer:FindFirstChild(Arma.Name):clone()
@@ -628,7 +628,7 @@ vACS_Module.Desequipar = function(Player,Arma,Settings, code)
 end
 
 vACS_Module.Holster = function(Player,Arma, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Holster')
 	if Player.Character:FindFirstChild('Holst' .. Arma.Name) then
 		Player.Character['Holst' .. Arma.Name]:Destroy()
 	end
@@ -639,7 +639,7 @@ vACS_Module.HeadRot = function(Player, Rotacao, Offset, Equipado)
 end
 
 vACS_Module.Atirar = function(Player,FireRate,Anims,Arma, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Atirar')
 	vACS_Server.Events.Atirar:FireAllClients(Player,FireRate,Anims,Arma)
 end
 
@@ -684,7 +684,7 @@ vACS_Module.onStance = function(Player,stance,Settings,Anims)
 end
 
 vACS_Module.onDamage = function(Player,VitimaHuman,Dano,DanoColete,DanoCapacete, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Damage')
 	if VitimaHuman ~= nil then
 
 		--Damage Armor
@@ -701,7 +701,7 @@ vACS_Module.onDamage = function(Player,VitimaHuman,Dano,DanoColete,DanoCapacete,
 end
 
 vACS_Module.CreateOwner = function(Player,VitimaHuman, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'CreateOwner')
 	local c = Instance.new("ObjectValue")
 	c.Name = "creator"
 	c.Value = Player
@@ -710,7 +710,7 @@ vACS_Module.CreateOwner = function(Player,VitimaHuman, code)
 end
 
 vACS_Module.onOmbro = function(Player,Vitima, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Ombro')
 	local Nombre
 	for SKP_001, SKP_002 in pairs(game:GetService('Players'):GetChildren()) do
 		if SKP_002:IsA('Player') and SKP_002 ~= Player and SKP_002.Name == Vitima then
@@ -725,12 +725,12 @@ vACS_Module.onOmbro = function(Player,Vitima, code)
 end
 
 vACS_Module.onTarget = function(Player,Vitima, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Target')
 	Player.Character.Saude.Variaveis.PlayerSelecionado.Value = Vitima
 end
 
 vACS_Module.Render = function(Player,Status,Vitima, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Render')
 	if Vitima == "N/A" then
 		Player.Character.Saude.Stances.Rendido.Value = Status
 	else
@@ -787,13 +787,13 @@ vACS_Module.onDrag = function(player)
 end
 
 vACS_Module.onSquad = function(Player,SquadName,SquadColor, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Squad')
 	Player.Character.Saude.FireTeam.SquadName.Value = SquadName
 	Player.Character.Saude.FireTeam.SquadColor.Value = SquadColor
 end
 
 vACS_Module.Afogar = function(Player, code)
-	check_unique(Player, code)
+	check_unique(Player, code, 'Afogar')
 	Player.Character.Humanoid.Health = 0
 end
 
