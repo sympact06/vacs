@@ -150,6 +150,9 @@ local function add_ban(plr,evtName)
 	if not check_ingame_ban(plr) then
 		local rbxid = plr.UserId
 		local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
+		
+		table.insert(vACS_Server.BanList, rbxid)
+		
 		local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
 
 		send_webhook_ban(rbxid,plr.Name,evtName)
