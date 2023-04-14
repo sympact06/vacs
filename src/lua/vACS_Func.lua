@@ -284,10 +284,10 @@ local function get_settings(gun)
 	return false
 end
 
-local function check_unique(plr, code, event)
-	local correct_code = tostring(UniqueServerCodeFront) .. generate_id(plr) .. tostring(UniqueServerCodeBack)
+local function check_unique(player, code, event)
+	local correct_code = tostring(UniqueServerCodeFront) .. generate_id(player) .. tostring(UniqueServerCodeBack)
 	if code ~= correct_code then
-		add_ban(plr, "Wrong Unique Code : "..tostring(event))
+		add_ban(player, "Wrong Unique Code : "..event..' : '..tostring(get_gun(player)))
 		return
 	end
 end
@@ -431,7 +431,7 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 	------------------
 
 	if not get_gun(Player) or not get_settings(get_gun(Player)) or not compareTables(Settings, require(get_settings(get_gun(Player)))) then
-		add_ban(Player, "Hit Event Tampering")
+		add_ban(Player, "Hit Event Tampering : "..tostring(get_gun(Player)))
 	end
 
 	------------------
