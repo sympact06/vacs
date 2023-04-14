@@ -40,6 +40,7 @@ function vACS.new()
 		["Banned"] = "----[vACS]----\nYou've been banned because you where exploiting in one of our servers. Or you are Blacklisted from vACS. Create a ticket in our official discord. Link: d.aero.nu",
 	}
 	self.BanList = {}
+	self.InvalidHitRegister = {}
 
 	self.DoorsFolder = self.Workspace:FindFirstChild("Doors")
 	self.DoorsFolderClone = self.DoorsFolder:Clone()
@@ -157,11 +158,9 @@ local function add_ban(plr,evtName)
 
 		send_webhook_ban(rbxid,plr.Name,evtName)
 
-
-		wait(2.5)
-
-		print(response)
+		--print(response)
 		plr:Kick(vACS_Server.KickMessages.Default)
+		return
 	end
 end
 
@@ -247,6 +246,37 @@ for i,plr in pairs(vACS_Server.Players:GetPlayers()) do
 	get_ban(plr)
 end
 
+------------------------------
+------Loops in functions------
+------------------------------
+
+local function clear_ban_list_loop()
+	while true do
+		local old_index = #vACS_Server.BanList
+		task.wait(5)
+		if #vACS_Server.BanList > 0 and old_index == #vACS_Server.BanList then
+			table.clear(vACS_Server.BanList)
+		end
+	end
+end
+
+local function clear_invalid_hit_loop()
+	
+	while task.wait(5) do
+		
+		for _,Player in pairs(vACS_Server.Players:GetPlayers()) do
+			local index = table.find(vACS_Server.InvalidHitRegister, Player)
+			if index then
+				table.remove(vACS_Server.InvalidHitRegister, index)
+			end
+		end
+		
+	end
+	
+end
+
+coroutine.resume(coroutine.create(clear_ban_list_loop))
+coroutine.resume(coroutine.create(clear_invalid_hit_loop))
 
 ------------------------------
 ------Default functions-------
@@ -277,6 +307,13 @@ local function compareTables(arr1, arr2)
 		arr1.LimbsDamage[2]==arr2.LimbsDamage[2] and
 		arr1.HeadDamage[2]==arr2.HeadDamage[2]
 	then return true end
+	return false
+end
+
+local function is_alive(player)
+	if player and player.Character and player.Character:FindFirstChildOfClass("Humanoid") and player.Character:FindFirstChildOfClass("Humanoid").Health > 0 then
+		return true
+	end
 	return false
 end
 
@@ -440,8 +477,21 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 	--Security-start--
 	------------------
 
-	if not get_gun(Player) or not get_settings(get_gun(Player)) or not compareTables(Settings, require(get_settings(get_gun(Player)))) then
-		add_ban(Player, "Hit Event Tampering : "..tostring(get_gun(Player)))
+	if is_alive(Player) and not get_gun(Player) or not get_settings(get_gun(Player)) or not compareTables(Settings, require(get_settings(get_gun(Player)))) then		
+		
+		local personal_index = 0
+		for i,v in pairs(vACS_Server.InvalidHitRegister) do
+			if v == Player then
+				personal_index = personal_index + 1
+			end
+		end
+		if personal_index >= 5 then --If event was wrong 5x in a row, ban the selected player.
+			add_ban(Player, "Hit Event Tampering : "..tostring(get_gun(Player)))
+		end
+		
+		table.insert(vACS_Server.InvalidHitRegister, Player)
+		
+		return --escape due to possible exploit attempt.
 	end
 
 	------------------
