@@ -792,8 +792,7 @@ vACS_Module.onSquad = function(Player,SquadName,SquadColor, code)
 	Player.Character.Saude.FireTeam.SquadColor.Value = SquadColor
 end
 
-vACS_Module.Afogar = function(Player, code)
-	check_unique(Player, code, 'Afogar')
+vACS_Module.Afogar = function(Player)
 	Player.Character.Humanoid.Health = 0
 end
 
