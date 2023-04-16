@@ -139,26 +139,16 @@ local function send_webhook_ban(userid, name, event)
 	end
 end
 
-local function check_ingame_ban(plr)
-	if table.find(vACS_Server.BanList, plr.UserId) then
-		return true
-	end
-	return false
-end
-
 
 local function add_ban(plr,evtName)
-	if not check_ingame_ban(plr) then
-		local rbxid = plr.UserId
-		local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
-		
+	local rbxid = plr.UserId
+	local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
+	
+	if not table.find(vACS_Server.BanList, rbxid) then
 		table.insert(vACS_Server.BanList, rbxid)
 		
 		local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
-
 		send_webhook_ban(rbxid,plr.Name,evtName)
-
-		--print(response)
 		plr:Kick(vACS_Server.KickMessages.Default)
 		return
 	end
@@ -344,7 +334,9 @@ end
 ------------------------------
 
 vACS_Module.onRecarregar = function(Player, StoredAmmo, Arma, code)
-	if typeof(Arma) == "table" then add_ban(Player, "Value Exploit") end
+	if typeof(Arma) == "table" then
+		add_ban(Player, "Value Exploit") 
+	end
 	check_unique(Player, code, 'Recarregar')
 	Arma.ACS_Modulo.Variaveis.StoredAmmo.Value = StoredAmmo
 end
@@ -477,23 +469,14 @@ vACS_Module.onHit = function(Player, Position, HitPart, Normal, Material, Settin
 	--Security-start--
 	------------------
 
-	if is_alive(Player) and not get_gun(Player) or not get_settings(get_gun(Player)) or not compareTables(Settings, require(get_settings(get_gun(Player)))) then		
-		
-		local personal_index = 0
-		for i,v in pairs(vACS_Server.InvalidHitRegister) do
-			if v == Player then
-				personal_index = personal_index + 1
-			end
-		end
-		if personal_index >= 5 then --If event was wrong 5x in a row, ban the selected player.
+	if is_alive(Player) and get_gun(Player) then
+		if not get_settings(get_gun(Player)) or not compareTables(Settings, require(get_settings(get_gun(Player)))) then
 			add_ban(Player, "Hit Event Tampering : "..tostring(get_gun(Player)))
 		end
-		
-		table.insert(vACS_Server.InvalidHitRegister, Player)
-		
-		return --escape due to possible exploit attempt.
+	else
+		return --Voorkomt FalsePositive, maar disallowed HitEvent tampering
 	end
-
+	
 	------------------
 	---Security-end---
 	------------------
