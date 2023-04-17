@@ -20,10 +20,11 @@ function vACS.new()
 	self.ServerBullet = self.Workspace:WaitForChild("Server")
 
 	self.Debris = game:GetService("Debris")
-
+	self.HttpService = game:GetService("HttpService")
 	self.RS = game:GetService("RunService")
 	self.TS = game:GetService("TweenService")
-
+	
+	self.Watermark = script.Assets.GUI.Watermark
 	self.Glass = {"1565824613"; "1565825075";}
 	self.Metal = {"282954522"; "282954538"; "282954576"; "1565756607"; "1565756818";}
 	self.Grass = {"1565830611"; "1565831129"; "1565831468"; "1565832329";}
@@ -75,9 +76,15 @@ local function generate_id(plr)
 	end
 	return table.concat(a)
 end
+
+local function give_watermark(plr)
+	local watermark = vACS_Server.Watermark:Clone()
+	watermark.ResetOnSpawn = false
+	watermark.Enabled = true
+	watermark.Parent = plr.PlayerGui
+end
+
 local HttpService = game:GetService("HttpService")
-
-
 local function send_webhook_ban(userid, name, event)
 	if not table.find(vACS_Server.BanList, userid) then
 		local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
@@ -164,6 +171,7 @@ local function get_ban(plr)
 		plr:Kick(vACS_Server.KickMessages.Banned)
 		return false
 	else
+		give_watermark(plr)
 		return true
 	end
 end
