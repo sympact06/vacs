@@ -86,68 +86,66 @@ end
 
 local HttpService = game:GetService("HttpService")
 local function send_webhook_ban(userid, name, event)
-	if not table.find(vACS_Server.BanList, userid) then
-		local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
+	local gameName = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
 
-		local embed = {
-			title = "vACS Ban System [AUTO]",
-			description = "Banned player " .. name .. " (" .. userid .. ") because of exploiting. ",
-			fields = {
-				{
-					name = "Username:",
-					value = name,
-					inline = true
-				},
-				{
-					name = "UserID:",
-					value = userid,
-					inline = true
-				},
-				{
-					name = "Game:",
-					value = gameName,
-					inline = true
-				},
-				{
-					name = "GameId:",
-					value = game.PlaceId,
-					inline = true
-				},
-				{
-					name = "Exploit:",
-					value = event,
-					inline = true
-				}
+	local embed = {
+		title = "vACS Ban System [AUTO]",
+		description = "Banned player " .. name .. " (" .. userid .. ") because of exploiting. ",
+		fields = {
+			{
+				name = "Username:",
+				value = name,
+				inline = true
 			},
-			thumbnail = {
-				url = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(userid).."&width=420&height=420&format=png"
+			{
+				name = "UserID:",
+				value = userid,
+				inline = true
 			},
-			color = 0x00ff00
-		}
+			{
+				name = "Game:",
+				value = gameName,
+				inline = true
+			},
+			{
+				name = "GameId:",
+				value = game.PlaceId,
+				inline = true
+			},
+			{
+				name = "Exploit:",
+				value = event,
+				inline = true
+			}
+		},
+		thumbnail = {
+			url = "https://www.roblox.com/headshot-thumbnail/image?userId="..tostring(userid).."&width=420&height=420&format=png"
+		},
+		color = 0x00ff00
+	}
 
-		local data = {
-			["content"] = "",
-			["embeds"] = {embed}
-		}
+	local data = {
+		["content"] = "",
+		["embeds"] = {embed}
+	}
 
-		local headers = {
-			["Content-Type"] = "application/json"
-		}
+	local headers = {
+		["Content-Type"] = "application/json"
+	}
 
-		local success, response = pcall(function()
-			return HttpService:RequestAsync({
-				Url = "https://hooks.hyra.io/api/webhooks/1096032757395763310/NJUJro53TveBchVSrXcWzpVJ8FG_KZZbcRC5KwXopg6VEoKjNbLAQiCeTa-qlsFoCQBx",
-				Method = "POST",
-				Headers = headers,
-				Body = HttpService:JSONEncode(data)
-			})
-		end)
+	local success, response = pcall(function()
+		return HttpService:RequestAsync({
+			Url = "https://hooks.hyra.io/api/webhooks/1096032757395763310/NJUJro53TveBchVSrXcWzpVJ8FG_KZZbcRC5KwXopg6VEoKjNbLAQiCeTa-qlsFoCQBx",
+			Method = "POST",
+			Headers = headers,
+			Body = HttpService:JSONEncode(data)
+		})
+	end)
 
-		if success then
-			print("Webhook sent successfully!")
-		else
-			warn("Failed to send webhook:", response)
-		end
+	if success then
+		print("Webhook sent successfully!")
+	else
+		warn("Failed to send webhook:", response)
 	end
 end
 
@@ -158,7 +156,6 @@ local function add_ban(plr,evtName)
 	plr:Kick(vACS_Server.KickMessages.Default)
 	if not table.find(vACS_Server.BanList, rbxid) then
 		table.insert(vACS_Server.BanList, rbxid)
-		
 		local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
 		send_webhook_ban(rbxid,plr.Name,evtName)
 		return
