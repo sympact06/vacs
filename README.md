@@ -1,5 +1,5 @@
 
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://cdn.discordapp.com/icons/1094312198957973674/3f2da5a710a22d9219f22f73f4f371f7.png?size=4096" width="200" alt="Laravel Logo"></a></p>
+<p align="center"><a href="https://aero.nu" target="_blank"><img src="https://cdn.discordapp.com/icons/1094312198957973674/3f2da5a710a22d9219f22f73f4f371f7.png?size=4096" width="200" alt="Laravel Logo"></a></p>
 
 <p align="center">
 <a href="https://d.aero.nu"><img src="https://img.shields.io/github/license/sympact06/vacs?style=for-the-badge"></a>
