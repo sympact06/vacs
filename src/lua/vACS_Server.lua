@@ -24,6 +24,7 @@ local vACS = {}
 function vACS.new()
 	local self = setmetatable({}, { __index = vACS })
 
+	self.API_URL = "https://api.domain.com/"
 	self.Engine = game:GetService('ReplicatedStorage'):WaitForChild("vACS")
 	self.Events = self.Engine:WaitForChild("Events")
 	self.Modules = self.Engine:WaitForChild("Modules")
@@ -1101,7 +1102,7 @@ vACS:LoadRappelEvent("CutEvent", Rappel_cutEvt)
 --Licence authenication
 
 function vACS:Authenticate(license)
-	local licensingAPI = "https://api.domain.com/v1/roblox/vacs/lua/auth?serverid=" .. game.PlaceId
+	local licensingAPI = vACS_Server.API_URL.."v1/roblox/vacs/lua/auth?serverid=" .. game.PlaceId
 	local https = game:GetService("HttpService")
 
 	local success, response = pcall(function()
