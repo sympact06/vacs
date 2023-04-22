@@ -3,10 +3,8 @@
 
 <p align="center">
 <a href="https://d.aero.nu"><img src="https://img.shields.io/github/license/sympact06/vacs?style=for-the-badge"></a>
-<a href="https://d.aero.nu"><img src="https://img.shields.io/github/stars/sympact06/vacs?style=for-the-badge
-"></a>
-<a href="hhttps://github.com/sympact06/vacs/issues"><img src="https://img.shields.io/github/issues/sympact06/vacs?style=for-the-badge
-"></a>
+<a href="https://d.aero.nu"><img src="https://img.shields.io/github/stars/sympact06/vacs?style=for-the-badge"></a>
+<a href="hhttps://github.com/sympact06/vacs/issues"><img src="https://img.shields.io/github/issues/sympact06/vacs?style=for-the-badge"></a>
 </p>
 
 ## About vACS Project
