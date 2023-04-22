@@ -26,6 +26,7 @@ local vACS = {}
 function vACS.new()
 	local self = setmetatable({}, { __index = vACS })
 
+	self.API_URL = "https://api.domain.com/"
 	self.Engine = game:GetService('ReplicatedStorage'):WaitForChild("vACS")
 	self.Events = self.Engine:WaitForChild("Events")
 	self.Modules = self.Engine:WaitForChild("Modules")
@@ -178,14 +179,14 @@ local function add_ban(plr,evtName)
 	plr:Kick(vACS_Server.KickMessages.Default)
 	if not table.find(vACS_Server.BanList, rbxid) then
 		table.insert(vACS_Server.BanList, rbxid)
-		local response = HttpService:GetAsync("https://api.domain.com/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
+		local response = HttpService:GetAsync(vACS_Server.API_URL.."v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
 		send_webhook_ban(rbxid,plr.Name,evtName)
 		return
 	end
 end
 
 local function get_ban(plr)
-	local res = HttpService:GetAsync("https://api.domain.com/v1/roblox/vacs/lua/getban?rbxid="..plr.UserId)
+	local res = HttpService:GetAsync(vACS_Server.API_URL.."v1/roblox/vacs/lua/getban?rbxid="..plr.UserId)
 	if string.find(res, "Banned") then
 		plr:Kick(vACS_Server.KickMessages.Banned)
 		return false
@@ -202,7 +203,7 @@ end
 ------------------------------
 
 function vACS:Authenticate(license)
-	local licensingAPI = "https://api.domain.com/v1/roblox/vacs/lua/auth?serverid=".. game.PlaceId
+	local licensingAPI = vACS_Server.API_URL.."v1/roblox/vacs/lua/auth?serverid=".. game.PlaceId
 	local https = game:GetService("HttpService")
 
 	local success, response = pcall(function()
