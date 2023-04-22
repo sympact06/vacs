@@ -1,3 +1,24 @@
+--[[ 
+* vACS Project
+* Copyright (C) 2020-2023 Sympact06 & Stuncs69 & TheJordinator
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as published
+* by the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*
+* For more information about the vACS Project, visit:
+* https://github.com/sympact06/vacs
+ ]]
+
 local vACS = {}
 
 function vACS.new()
@@ -1080,7 +1101,7 @@ vACS:LoadRappelEvent("CutEvent", Rappel_cutEvt)
 --Licence authenication
 
 function vACS:Authenticate(license)
-	local licensingAPI = "https://api.aero.nu/v1/roblox/vacs/lua/auth?serverid=" .. game.PlaceId
+	local licensingAPI = "https://api.domain.com/v1/roblox/vacs/lua/auth?serverid=" .. game.PlaceId
 	local https = game:GetService("HttpService")
 
 	local success, response = pcall(function()

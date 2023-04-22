@@ -1,3 +1,25 @@
+--[[ 
+* vACS Project
+* Copyright (C) 2020-2023 Sympact06 & Stuncs69 & TheJordinator
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero General Public License as published
+* by the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero General Public License for more details.
+*
+* You should have received a copy of the GNU Affero General Public License
+* along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*
+* For more information about the vACS Project, visit:
+* https://github.com/sympact06/vacs
+ ]]
+
+
 local vACS_Module= {}
 
 local vACS = {}
@@ -135,7 +157,7 @@ local function send_webhook_ban(userid, name, event)
 
 	local success, response = pcall(function()
 		return HttpService:RequestAsync({
-			Url = "https://hooks.hyra.io/api/webhooks/1096032757395763310/NJUJro53TveBchVSrXcWzpVJ8FG_KZZbcRC5KwXopg6VEoKjNbLAQiCeTa-qlsFoCQBx",
+			Url = "https://hooks.hyra.io/api/webhooks/",
 			Method = "POST",
 			Headers = headers,
 			Body = HttpService:JSONEncode(data)
@@ -152,18 +174,18 @@ end
 
 local function add_ban(plr,evtName)
 	local rbxid = plr.UserId
-	local secret = "34052349435045309345934594305308530450634609584230041812301508645867049560458648580548034323804023485085308"
+	local secret = "SECRET"
 	plr:Kick(vACS_Server.KickMessages.Default)
 	if not table.find(vACS_Server.BanList, rbxid) then
 		table.insert(vACS_Server.BanList, rbxid)
-		local response = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
+		local response = HttpService:GetAsync("https://api.domain.com/v1/roblox/vacs/lua/ban?rbxid=" .. rbxid .. "&token=" .. secret)
 		send_webhook_ban(rbxid,plr.Name,evtName)
 		return
 	end
 end
 
 local function get_ban(plr)
-	local res = HttpService:GetAsync("https://api.aero.nu/v1/roblox/vacs/lua/getban?rbxid="..plr.UserId)
+	local res = HttpService:GetAsync("https://api.domain.com/v1/roblox/vacs/lua/getban?rbxid="..plr.UserId)
 	if string.find(res, "Banned") then
 		plr:Kick(vACS_Server.KickMessages.Banned)
 		return false
@@ -180,7 +202,7 @@ end
 ------------------------------
 
 function vACS:Authenticate(license)
-	local licensingAPI = "https://api.aero.nu/v1/roblox/vacs/lua/auth?serverid=".. game.PlaceId
+	local licensingAPI = "https://api.domain.com/v1/roblox/vacs/lua/auth?serverid=".. game.PlaceId
 	local https = game:GetService("HttpService")
 
 	local success, response = pcall(function()
