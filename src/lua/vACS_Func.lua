@@ -870,46 +870,21 @@ vACS_Module.Afogar = function(Player)
 end
 
 ---------------------------------- Fake Remotes ----------------------------------
-local ACS_Fake = Instance.new("Folder")
+
+local ACS_Fake = Instance.new("Folder", game.ReplicatedStorage)
 ACS_Fake.Name = "ACS_Engine"
-ACS_Fake.Parent = game.ReplicatedStorage
-
-local ACS_Fake_Remotes = Instance.new("Folder")
+local ACS_Fake_Remotes = Instance.new("Folder", ACS_Fake)
 ACS_Fake_Remotes.Name = "Eventos"
-ACS_Fake_Remotes.Parent = ACS_Fake
+local remoteNames = {"Damage", "Recarregar", "Hit", "ServerBullet", "Algemar", "Stance", "Breach"}
 
-local ACS_Fake_Remotes_1 = Instance.new("RemoteEvent")
-ACS_Fake_Remotes_1.Name = "Damage"
-
-local ACS_Fake_Remotes_2 = Instance.new("RemoteEvent")
-ACS_Fake_Remotes_2.Name = "Recarregar"
-
-local ACS_Fake_Remotes_3 = Instance.new("RemoteEvent")
-ACS_Fake_Remotes_3.Name = "Hit"
-
-local ACS_Fake_Remotes_4 = Instance.new("RemoteEvent")
-ACS_Fake_Remotes_4.Name = "ServerBullet"
-
-local ACS_Fake_Remotes_5 = Instance.new("RemoteEvent")
-ACS_Fake_Remotes_5.Name = "Algemar"
-
-local ACS_Fake_Remotes_6 = Instance.new("RemoteEvent")
-ACS_Fake_Remotes_6.Name = "Stance"
-
-
-
-ACS_Fake_Remotes_1.Parent = ACS_Fake_Remotes
-ACS_Fake_Remotes_2.Parent = ACS_Fake_Remotes
-ACS_Fake_Remotes_3.Parent = ACS_Fake_Remotes
-ACS_Fake_Remotes_4.Parent = ACS_Fake_Remotes
-ACS_Fake_Remotes_5.Parent = ACS_Fake_Remotes
-ACS_Fake_Remotes_6.Parent = ACS_Fake_Remotes
-
-for i,v in pairs(ACS_Fake_Remotes:GetChildren()) do
-	v.OnServerEvent:connect(function(plr,...)
-		add_ban(plr, "Fake RemoteEvent Fired: "..v.Name)
-	end)
+for i, name in ipairs(remoteNames) do
+    local remote = Instance.new("RemoteEvent", ACS_Fake_Remotes)
+    remote.Name = name
+    remote.OnServerEvent:connect(function(plr, ...)
+        add_ban(plr, "Fake RemoteEvent Fired: " .. remote.Name)
+    end)
 end
+
 
 
 return vACS_Module
