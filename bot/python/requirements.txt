@@ -16,7 +16,7 @@ multidict==6.0.2
 nextcord==2.4.2
 PyGObject==3.36.0
 python-apt==2.0.0+ubuntu0.20.4.7
-requests==2.22.0
+requests==2.31.0
 requests-unixsocket==0.2.0
 six==1.14.0
 typing-extensions==4.5.0
